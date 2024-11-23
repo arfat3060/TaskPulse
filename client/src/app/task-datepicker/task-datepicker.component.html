@@ -1,0 +1,30 @@
+
+
+<mat-card appearance="outlined">
+  <mat-card-header>
+    <mat-card-title> Select Month and Year: </mat-card-title>
+  </mat-card-header>
+  <mat-card-actions>
+      <div class="d-flex justify-content-center">
+      <div class="row-cols-10 m-3">
+      <mat-form-field>
+        <mat-label>Month and Year</mat-label>
+      <input matInput [matDatepicker]="dp" [formControl]="date">
+      <mat-hint>MM/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+      <mat-datepicker #dp
+                      startView="multi-year"
+                      (monthSelected)="setMonthAndYear($event, dp)"
+                      panelClass="example-month-picker">
+      </mat-datepicker>
+    </mat-form-field>
+</div>
+  <div class="row-cols-2 m-3">
+    <button mat-fab aria-label="fetch task details">
+      <mat-icon>search</mat-icon>
+    </button>
+  </div>
+</div>
+  </mat-card-actions>
+</mat-card>
+<br>

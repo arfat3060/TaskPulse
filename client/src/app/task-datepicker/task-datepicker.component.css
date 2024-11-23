@@ -1,0 +1,16 @@
+@use '@angular/material' as mat;
+
+:root {
+  @include mat.datepicker-overrides((
+    calendar-date-selected-state-text-color: orange,
+    calendar-date-selected-state-background-color: red,
+  ));
+}
+
+.example-month-picker .mat-calendar-period-button {
+    pointer-events: none;
+  }
+  
+  .example-month-picker .mat-calendar-arrow {
+    display: none;
+  }

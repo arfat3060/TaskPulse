@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@ampproject/remapping/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@angular-devkit/architect/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@angular-devkit/schematics/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@angular/build/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@angular/cli/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@angular/compiler-cli/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@babel/generator/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@babel/helper-annotate-as-pure/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@babel/helper-split-export-declaration/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@babel/plugin-transform-async-generator-functions/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@babel/plugin-transform-async-to-generator/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@babel/runtime/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@inquirer/prompts/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@listr2/prompt-adapter-inquirer/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/@schematics/angular/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/autoprefixer/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/babel-loader/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/browserslist/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/copy-webpack-plugin/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/critters/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/css-loader/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/esbuild/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/http-proxy-middleware/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/https-proxy-agent/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/istanbul-lib-instrument/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/magic-string/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/mini-css-extract-plugin/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/node-gyp/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/parse5-html-rewriting-stream/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/postcss/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/watchpack/node_modules" />
+    <excludedPredefinedLibrary name="TaskPulse/client/node_modules/webpack-dev-middleware/node_modules" />
+  </component>
+</project>
