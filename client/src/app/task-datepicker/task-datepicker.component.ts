@@ -9,6 +9,8 @@ import {default as _rollupMoment, Moment} from 'moment';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { TaskLoaderComponent } from '../task-loader/task-loader.component';
 
 const moment = _rollupMoment || _moment;
 
@@ -37,16 +39,17 @@ export const MY_FORMATS = {
     MatDatepickerModule,
     FormsModule,
     ReactiveFormsModule,
-    MatCardModule, 
+    MatCardModule,
     MatButtonModule,
     MatIconModule
-  ],
+],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 
 export class TaskDatepickerComponent  {
 
+  constructor(private dialog: MatDialog) {}
 
   readonly date = new FormControl(moment());
 
@@ -58,5 +61,14 @@ export class TaskDatepickerComponent  {
     datepicker.close();
   }
 
+  openLoadingDialog(): void {
+    const dialogRef = this.dialog.open(TaskLoaderComponent, {
+      disableClose: true, 
+    });
+
+    setTimeout(() => {
+      dialogRef.close(); 
+    }, 3000);
+  }
 
 }

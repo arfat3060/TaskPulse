@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TaskDetailsComponent } from "./task-details/task-details.component";
 
 @Component({
   selector: 'app-root',
@@ -16,8 +17,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     MatNativeDateModule,
     MatInputModule,
     MatFormFieldModule,
-    ReactiveFormsModule,
-  ],
+    ReactiveFormsModule, TaskDetailsComponent, TaskDetailsComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

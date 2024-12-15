@@ -10,4 +10,29 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="client\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="client\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="client\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="client\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="client\angular.json" />
+      <_ContentIncludedByDefault Remove="client\package-lock.json" />
+      <_ContentIncludedByDefault Remove="client\package.json" />
+      <_ContentIncludedByDefault Remove="client\tsconfig.app.json" />
+      <_ContentIncludedByDefault Remove="client\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="client\tsconfig.spec.json" />
+    </ItemGroup>
+
 </Project>

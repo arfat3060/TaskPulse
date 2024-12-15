@@ -1,0 +1,10 @@
+.loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+mat-spinner {
+    margin: 12px;
+    font-size: 16px;
+}
