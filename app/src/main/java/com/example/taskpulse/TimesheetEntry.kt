@@ -13,6 +13,7 @@ data class TimesheetEntry(
     var isLeave: Boolean = false,
     var leaveReason: String = "",
     var isHoliday: Boolean = false,
+    var holidayName: String = "",
     var isWeekend: Boolean = false,
     var taskDescription: String = ""
 )

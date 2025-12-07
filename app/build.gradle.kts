@@ -7,6 +7,7 @@ android {
     namespace = "com.example.taskpulse"
     compileSdk {
         version = release(36)
+        version = release(36)
     }
 
     defaultConfig {
@@ -45,10 +46,10 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.documentfile:documentfile:1.1.0")
-    implementation("org.apache.poi:poi:5.2.3") {
-        exclude(group = "org.apache.logging.log4j", module = "log4j-api")
+    implementation("org.apache.poi:poi:5.2.3")
+    implementation("org.apache.poi:poi-ooxml:5.2.3") {
+        exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
     }
-    implementation("org.apache.poi:poi-ooxml:5.2.3")
     implementation("org.jsoup:jsoup:1.17.2")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.airbnb.android:lottie:6.3.0")

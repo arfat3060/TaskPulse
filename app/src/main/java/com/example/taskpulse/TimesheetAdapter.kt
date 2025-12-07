@@ -35,6 +35,7 @@ class TimesheetAdapter(
         private val dateTextView: TextView = itemView.findViewById(R.id.date_text_view)
         private val dayTextView: TextView = itemView.findViewById(R.id.day_text_view)
         private val totalHoursTextView: TextView = itemView.findViewById(R.id.total_hours_text_view)
+        private val holidayNameTextView: TextView = itemView.findViewById(R.id.holiday_name_text_view)
         private val inTimeEditText: TextInputEditText = itemView.findViewById(R.id.in_time_edit_text)
         private val outTimeEditText: TextInputEditText = itemView.findViewById(R.id.out_time_edit_text)
         private val taskDescriptionEditText: TextInputEditText = itemView.findViewById(R.id.task_description_edit_text)
@@ -46,19 +47,25 @@ class TimesheetAdapter(
             dateTextView.text = entry.date
             dayTextView.text = entry.day
 
-            if (entry.isWeekend || entry.isHoliday) {
+            val isWorkableDay = !entry.isWeekend && !entry.isHoliday
+            inTimeEditText.isEnabled = isWorkableDay && !entry.isLeave
+            outTimeEditText.isEnabled = isWorkableDay && !entry.isLeave
+            taskDescriptionEditText.isEnabled = isWorkableDay && !entry.isLeave
+            leaveCheckbox.isEnabled = isWorkableDay
+
+            if (entry.isHoliday) {
+                holidayNameTextView.text = entry.holidayName
+                holidayNameTextView.visibility = View.VISIBLE
                 itemView.alpha = 0.5f
-                inTimeEditText.isEnabled = false
-                outTimeEditText.isEnabled = false
-                taskDescriptionEditText.isEnabled = false
-                leaveCheckbox.isEnabled = false
+                totalHoursTextView.visibility = View.INVISIBLE
+            } else if (entry.isWeekend) {
+                holidayNameTextView.text = "Weekend"
+                holidayNameTextView.visibility = View.VISIBLE
+                itemView.alpha = 0.5f
                 totalHoursTextView.visibility = View.INVISIBLE
             } else {
+                holidayNameTextView.visibility = View.GONE
                 itemView.alpha = 1.0f
-                inTimeEditText.isEnabled = true
-                outTimeEditText.isEnabled = true
-                taskDescriptionEditText.isEnabled = true
-                leaveCheckbox.isEnabled = true
                 totalHoursTextView.visibility = View.VISIBLE
             }
 
@@ -85,6 +92,9 @@ class TimesheetAdapter(
 
             leaveCheckbox.setOnCheckedChangeListener { _, isChecked ->
                 entries[adapterPosition].isLeave = isChecked
+                inTimeEditText.isEnabled = !isChecked
+                outTimeEditText.isEnabled = !isChecked
+                taskDescriptionEditText.isEnabled = !isChecked
                 leaveReasonInputLayout.visibility = if (isChecked) View.VISIBLE else View.GONE
             }
 
@@ -99,7 +109,7 @@ class TimesheetAdapter(
             totalHoursTextView.text = hours.first
             val totalMinutes = TimeUnit.MILLISECONDS.toMinutes(hours.second)
 
-            if (totalMinutes < 9 * 60) {
+            if (totalMinutes > 0 && totalMinutes < 9 * 60) {
                 totalHoursTextView.setTextColor(Color.RED)
             } else {
                 totalHoursTextView.setTextColor(Color.GREEN)

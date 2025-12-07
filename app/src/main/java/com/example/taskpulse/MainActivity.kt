@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private val STORAGE_PERMISSION_CODE = 101
     private lateinit var timesheetAdapter: TimesheetAdapter
     private val entries = mutableListOf<TimesheetEntry>()
-    private var holidays = mutableListOf<String>()
+    private var holidays = mapOf<String, String>()
     private val holidayScraper = HolidayScraper()
     private val gson = Gson()
     private lateinit var sharedPreferences: SharedPreferences
@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
+        supportActionBar?.title = "Details"
 
         sharedPreferences = getSharedPreferences("TaskPulsePrefs", Context.MODE_PRIVATE)
         calendar = Calendar.getInstance()
@@ -127,9 +128,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateMonthYearTextView() {
         val monthYearFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
-        val title = monthYearFormat.format(calendar.time)
-        findViewById<TextView>(R.id.month_year_text_view).text = title
-        supportActionBar?.title = title
+        findViewById<TextView>(R.id.month_year_text_view).text = monthYearFormat.format(calendar.time)
     }
 
     private fun populateTimesheetEntries() {
@@ -137,36 +136,49 @@ class MainActivity : AppCompatActivity() {
         val month = calendar.get(Calendar.MONTH)
         val savedEntriesJson = sharedPreferences.getString("entries_$year-$month", null)
 
-        entries.clear()
-        if (savedEntriesJson != null) {
+        val existingEntries = if (savedEntriesJson != null) {
             val type = object : TypeToken<MutableList<TimesheetEntry>>() {}.type
-            entries.addAll(gson.fromJson(savedEntriesJson, type))
+            gson.fromJson<MutableList<TimesheetEntry>>(savedEntriesJson, type)
         } else {
-            val tempCalendar = calendar.clone() as Calendar
-            tempCalendar.set(Calendar.DAY_OF_MONTH, 1)
-            val maxDays = tempCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
+            null
+        }
 
-            for (i in 1..maxDays) {
-                tempCalendar.set(Calendar.DAY_OF_MONTH, i)
-                val dateString = dateFormat.format(tempCalendar.time)
-                val dayString = dayFormat.format(tempCalendar.time)
-                val dayOfWeek = tempCalendar.get(Calendar.DAY_OF_WEEK)
+        entries.clear()
 
-                val isWeekend = dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY
-                val isHoliday = holidays.contains(dateString)
+        val tempCalendar = calendar.clone() as Calendar
+        tempCalendar.set(Calendar.DAY_OF_MONTH, 1)
+        val maxDays = tempCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
 
+        for (i in 1..maxDays) {
+            tempCalendar.set(Calendar.DAY_OF_MONTH, i)
+            val dateString = dateFormat.format(tempCalendar.time)
+            val savedEntry = existingEntries?.find { it.date == dateString }
+
+            val dayString = dayFormat.format(tempCalendar.time)
+            val dayOfWeek = tempCalendar.get(Calendar.DAY_OF_WEEK)
+            val isWeekend = dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY
+            val holidayName = holidays[dateString]
+
+            if (savedEntry != null) {
+                savedEntry.isHoliday = holidayName != null
+                savedEntry.holidayName = holidayName ?: ""
+                savedEntry.isWeekend = isWeekend
+                entries.add(savedEntry)
+            } else {
                 entries.add(TimesheetEntry(
                     date = dateString,
                     day = dayString,
                     isWeekend = isWeekend,
-                    isHoliday = isHoliday
+                    isHoliday = holidayName != null,
+                    holidayName = holidayName ?: ""
                 ))
             }
         }
         timesheetAdapter.notifyDataSetChanged()
     }
+
 
     private fun saveTimesheetEntries() {
         val year = calendar.get(Calendar.YEAR)
@@ -185,28 +197,26 @@ class MainActivity : AppCompatActivity() {
     private fun loadHolidays() {
         val holidaysJson = sharedPreferences.getString("holidays", null)
         if (holidaysJson != null) {
-            val type = object : TypeToken<List<String>>() {}.type
-            holidays.clear()
-            holidays.addAll(gson.fromJson(holidaysJson, type))
+            val type = object : TypeToken<Map<String, String>>() {}.type
+            holidays = gson.fromJson(holidaysJson, type)
         } else {
-            holidays.addAll(listOf(
-                "01-01-2025",
-                "26-01-2025",
-                "29-03-2025",
-                "15-08-2025",
-                "02-10-2025",
-                "25-12-2025"
-            ))
+            holidays = mapOf(
+                "01-01-2025" to "New Year's Day",
+                "26-01-2025" to "Republic Day",
+                "29-03-2025" to "Good Friday",
+                "15-08-2025" to "Independence Day",
+                "02-10-2025" to "Gandhi Jayanti",
+                "25-12-2025" to "Christmas"
+            )
         }
     }
 
     private fun refreshHolidays() {
         lifecycleScope.launch {
             Toast.makeText(this@MainActivity, "Refreshing holidays...", Toast.LENGTH_SHORT).show()
-            val scrapedHolidays = holidayScraper.scrapeHolidays("https://www.nseindia.com/resources/exchange-communication-holidays")
+            val scrapedHolidays = holidayScraper.scrapeHolidays()
             if (scrapedHolidays.isNotEmpty()) {
-                holidays.clear()
-                holidays.addAll(scrapedHolidays)
+                holidays = scrapedHolidays
                 val holidaysJson = gson.toJson(holidays)
                 sharedPreferences.edit().putString("holidays", holidaysJson).apply()
                 populateTimesheetEntries()
@@ -236,8 +246,12 @@ class MainActivity : AppCompatActivity() {
     private fun showGenerateFileDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_generate_file, null)
         val fileNameEditText = dialogView.findViewById<EditText>(R.id.file_name_edit_text)
-        val defaultFileName = sharedPreferences.getString("fileName", "Timesheet")
+        val selectedPathTextView = dialogView.findViewById<TextView>(R.id.selected_path_text_view)
+        val monthYearFormat = SimpleDateFormat("MMMM_yyyy", Locale.getDefault())
+        val defaultFileName = "Timesheet_${monthYearFormat.format(calendar.time)}"
         fileNameEditText.setText(defaultFileName)
+        selectedPathTextView.text = "Selected Path: ${outputDirectory?.path ?: "Default (Downloads)"}"
+
 
         val browseButton = dialogView.findViewById<Button>(R.id.browse_button)
         browseButton.setOnClickListener {
@@ -272,7 +286,7 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.also {
                 outputDirectory = it
-                Toast.makeText(this, "Output path selected", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Output path selected: ${it.path}", Toast.LENGTH_LONG).show()
             }
         }
     }

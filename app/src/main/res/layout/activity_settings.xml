@@ -53,6 +53,17 @@
         app:layout_constraintStart_toStartOf="@+id/file_name_input_layout"
         app:layout_constraintTop_toBottomOf="@+id/file_name_input_layout" />
 
+    <TextView
+        android:id="@+id/selected_path_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="No path selected"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/browse_button" />
+
     <Button
         android:id="@+id/save_settings_button"
         android:layout_width="wrap_content"
@@ -61,6 +72,6 @@
         android:text="Save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/browse_button" />
+        app:layout_constraintTop_toBottomOf="@+id/selected_path_text_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

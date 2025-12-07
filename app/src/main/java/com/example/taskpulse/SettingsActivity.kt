@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var fileNameEditText: TextInputEditText
+    private lateinit var selectedPathTextView: TextView
     private var outputDirectory: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +33,13 @@ class SettingsActivity : AppCompatActivity() {
 
         fileNameEditText = findViewById(R.id.file_name_edit_text)
         fileNameEditText.setText(sharedPreferences.getString("fileName", "Timesheet"))
+
+        selectedPathTextView = findViewById(R.id.selected_path_text_view)
+        val outputUriString = sharedPreferences.getString("outputUri", null)
+        if (outputUriString != null) {
+            outputDirectory = Uri.parse(outputUriString)
+            selectedPathTextView.text = "Selected Path: ${outputDirectory?.path}"
+        }
 
         val browseButton = findViewById<Button>(R.id.browse_button)
         browseButton.setOnClickListener {
@@ -52,6 +61,7 @@ class SettingsActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.also {
                 outputDirectory = it
+                selectedPathTextView.text = "Selected Path: ${it.path}"
                 Toast.makeText(this, "Output path selected", Toast.LENGTH_SHORT).show()
             }
         }
