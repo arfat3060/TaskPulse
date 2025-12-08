@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="?attr/materialCardViewFilledStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp">
@@ -15,46 +16,41 @@
             android:id="@+id/date_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textAppearance="?attr/textAppearanceHeadline6"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="01-01-2025" />
+            tools:text="Tuesday, 02 Dec 2025" />
 
         <TextView
-            android:id="@+id/day_text_view"
+            android:id="@+id/status_badge_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            app:layout_constraintBaseline_toBaselineOf="@+id/date_text_view"
-            app:layout_constraintStart_toEndOf="@+id/date_text_view"
-            tools:text="Wednesday" />
-
-        <TextView
-            android:id="@+id/holiday_name_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:textColor="@android:color/holo_red_dark"
+            android:background="@drawable/badge_background"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="?attr/colorOnPrimaryContainer"
             android:textStyle="bold"
-            app:layout_constraintBaseline_toBaselineOf="@+id/day_text_view"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:text="Christmas Day" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Holiday" />
 
         <TextView
             android:id="@+id/total_hours_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            app:layout_constraintBaseline_toBaselineOf="@+id/day_text_view"
-            app:layout_constraintEnd_toStartOf="@+id/holiday_name_text_view"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            app:layout_constraintBaseline_toBaselineOf="@+id/date_text_view"
+            app:layout_constraintEnd_toStartOf="@+id/status_badge_text_view"
             tools:text="9:00" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/in_time_input_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -75,7 +71,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/out_time_input_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Out Time"
@@ -94,7 +90,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/task_description_input_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -122,7 +118,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/leave_reason_input_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

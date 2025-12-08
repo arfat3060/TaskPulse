@@ -14,10 +14,13 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -46,7 +49,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -57,10 +66,10 @@ class MainActivity : AppCompatActivity() {
 
         nameEditText = findViewById(R.id.name_edit_text)
         projectNameEditText = findViewById(R.id.project_name_edit_text)
-        val generateButton = findViewById<FloatingActionButton>(R.id.generate_button)
         val prevMonthButton = findViewById<ImageButton>(R.id.prev_month_button)
         val nextMonthButton = findViewById<ImageButton>(R.id.next_month_button)
         val recyclerView = findViewById<RecyclerView>(R.id.timesheet_recycler_view)
+        val generateButton = findViewById<FloatingActionButton>(R.id.generate_button)
 
         nameEditText.setText(sharedPreferences.getString("name", ""))
         projectNameEditText.setText(sharedPreferences.getString("projectName", ""))
@@ -148,18 +157,19 @@ class MainActivity : AppCompatActivity() {
         val tempCalendar = calendar.clone() as Calendar
         tempCalendar.set(Calendar.DAY_OF_MONTH, 1)
         val maxDays = tempCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
         val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
 
         for (i in 1..maxDays) {
             tempCalendar.set(Calendar.DAY_OF_MONTH, i)
             val dateString = dateFormat.format(tempCalendar.time)
+            val apiDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val apiDateString = apiDateFormat.format(tempCalendar.time)
             val savedEntry = existingEntries?.find { it.date == dateString }
 
-            val dayString = dayFormat.format(tempCalendar.time)
             val dayOfWeek = tempCalendar.get(Calendar.DAY_OF_WEEK)
             val isWeekend = dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY
-            val holidayName = holidays[dateString]
+            val holidayName = holidays[apiDateString]
 
             if (savedEntry != null) {
                 savedEntry.isHoliday = holidayName != null
@@ -169,7 +179,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 entries.add(TimesheetEntry(
                     date = dateString,
-                    day = dayString,
+                    day = dayFormat.format(tempCalendar.time),
                     isWeekend = isWeekend,
                     isHoliday = holidayName != null,
                     holidayName = holidayName ?: ""
@@ -286,7 +296,9 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.also {
                 outputDirectory = it
-                Toast.makeText(this, "Output path selected: ${it.path}", Toast.LENGTH_LONG).show()
+                // Re-show the dialog to reflect the new path
+                showGenerateFileDialog()
+                Toast.makeText(this, "Output path selected", Toast.LENGTH_SHORT).show()
             }
         }
     }

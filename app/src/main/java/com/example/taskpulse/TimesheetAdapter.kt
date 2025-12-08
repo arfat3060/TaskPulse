@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
@@ -33,9 +34,8 @@ class TimesheetAdapter(
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val dateTextView: TextView = itemView.findViewById(R.id.date_text_view)
-        private val dayTextView: TextView = itemView.findViewById(R.id.day_text_view)
+        private val statusBadgeTextView: TextView = itemView.findViewById(R.id.status_badge_text_view)
         private val totalHoursTextView: TextView = itemView.findViewById(R.id.total_hours_text_view)
-        private val holidayNameTextView: TextView = itemView.findViewById(R.id.holiday_name_text_view)
         private val inTimeEditText: TextInputEditText = itemView.findViewById(R.id.in_time_edit_text)
         private val outTimeEditText: TextInputEditText = itemView.findViewById(R.id.out_time_edit_text)
         private val taskDescriptionEditText: TextInputEditText = itemView.findViewById(R.id.task_description_edit_text)
@@ -45,7 +45,6 @@ class TimesheetAdapter(
 
         fun bind(entry: TimesheetEntry) {
             dateTextView.text = entry.date
-            dayTextView.text = entry.day
 
             val isWorkableDay = !entry.isWeekend && !entry.isHoliday
             inTimeEditText.isEnabled = isWorkableDay && !entry.isLeave
@@ -53,20 +52,28 @@ class TimesheetAdapter(
             taskDescriptionEditText.isEnabled = isWorkableDay && !entry.isLeave
             leaveCheckbox.isEnabled = isWorkableDay
 
+            statusBadgeTextView.visibility = View.GONE
+            totalHoursTextView.visibility = View.VISIBLE
+
             if (entry.isHoliday) {
-                holidayNameTextView.text = entry.holidayName
-                holidayNameTextView.visibility = View.VISIBLE
-                itemView.alpha = 0.5f
-                totalHoursTextView.visibility = View.INVISIBLE
+                statusBadgeTextView.text = entry.holidayName
+                statusBadgeTextView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.md_theme_light_primaryContainer))
+                statusBadgeTextView.visibility = View.VISIBLE
             } else if (entry.isWeekend) {
-                holidayNameTextView.text = "Weekend"
-                holidayNameTextView.visibility = View.VISIBLE
-                itemView.alpha = 0.5f
+                statusBadgeTextView.text = "Weekend"
+                statusBadgeTextView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.md_theme_light_errorContainer))
+                statusBadgeTextView.visibility = View.VISIBLE
+            } else if (entry.isLeave) {
+                statusBadgeTextView.text = "Leave"
+                statusBadgeTextView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.md_theme_light_tertiaryContainer))
+                statusBadgeTextView.visibility = View.VISIBLE
+            }
+
+            if (entry.isWeekend || entry.isHoliday) {
+                itemView.alpha = 0.7f
                 totalHoursTextView.visibility = View.INVISIBLE
             } else {
-                holidayNameTextView.visibility = View.GONE
                 itemView.alpha = 1.0f
-                totalHoursTextView.visibility = View.VISIBLE
             }
 
             inTimeEditText.setText(entry.inTime)
