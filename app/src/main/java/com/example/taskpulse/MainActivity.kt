@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var nameEditText: TextInputEditText
     private lateinit var projectNameEditText: TextInputEditText
     private var outputDirectory: Uri? = null
+    private var currentDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,7 +100,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         generateButton.setOnClickListener {
-            showGenerateFileDialog()
+            showExportDialog()
         }
     }
 
@@ -253,38 +255,50 @@ class MainActivity : AppCompatActivity() {
         TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
     }
 
-    private fun showGenerateFileDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_generate_file, null)
+    private fun showExportDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_export_timesheet, null)
         val fileNameEditText = dialogView.findViewById<EditText>(R.id.file_name_edit_text)
-        val selectedPathTextView = dialogView.findViewById<TextView>(R.id.selected_path_text_view)
+        val saveToTextView = dialogView.findViewById<TextView>(R.id.save_to_text_view)
         val monthYearFormat = SimpleDateFormat("MMMM_yyyy", Locale.getDefault())
         val defaultFileName = "Timesheet_${monthYearFormat.format(calendar.time)}"
         fileNameEditText.setText(defaultFileName)
-        selectedPathTextView.text = "Selected Path: ${outputDirectory?.path ?: "Default (Downloads)"}"
 
+        val path = getFriendlyPath(outputDirectory)
+        saveToTextView.text = "Save to: $path"
 
-        val browseButton = dialogView.findViewById<Button>(R.id.browse_button)
-        browseButton.setOnClickListener {
+        val chooseFolderButton = dialogView.findViewById<Button>(R.id.choose_folder_button)
+        chooseFolderButton.setOnClickListener {
             openDirectoryPicker()
         }
 
-        AlertDialog.Builder(this)
-            .setTitle("Generate Timesheet")
+        currentDialog = AlertDialog.Builder(this)
             .setView(dialogView)
-            .setPositiveButton("Save") { _, _ ->
+            .setPositiveButton("Export") { _, _ ->
                 val fileName = fileNameEditText.text.toString()
                 if (fileName.isNotEmpty()) {
                     val name = nameEditText.text.toString()
                     val projectName = projectNameEditText.text.toString()
                     val timesheetGenerator = TimesheetGenerator(this)
                     timesheetGenerator.generateTimesheet(name, projectName, entries, fileName, outputDirectory)
-                    Toast.makeText(this, "Timesheet saved", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Timesheet exported successfully", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this, "File name cannot be empty", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun getFriendlyPath(uri: Uri?): String {
+        if (uri == null) return "Downloads"
+        if (DocumentsContract.isTreeUri(uri)) {
+            val docId = DocumentsContract.getTreeDocumentId(uri)
+            val split = docId.split(":")
+            if (split.size > 1) {
+                return split[1].replace("/", " > ")
+            }
+        }
+        return uri.path?.substringAfterLast(":")?.replace("/", " > ") ?: "Default (Downloads)"
     }
 
     private fun openDirectoryPicker() {
@@ -296,8 +310,8 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.also {
                 outputDirectory = it
-                // Re-show the dialog to reflect the new path
-                showGenerateFileDialog()
+                val saveToTextView = currentDialog?.findViewById<TextView>(R.id.save_to_text_view)
+                saveToTextView?.text = "Save to: ${getFriendlyPath(it)}"
                 Toast.makeText(this, "Output path selected", Toast.LENGTH_SHORT).show()
             }
         }
