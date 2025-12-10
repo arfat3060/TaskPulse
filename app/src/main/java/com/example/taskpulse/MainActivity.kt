@@ -121,10 +121,10 @@ class MainActivity : AppCompatActivity() {
                 refreshHolidays()
                 true
             }
-            R.id.action_configure_file -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
-                true
-            }
+//            R.id.action_configure_file -> {
+//                startActivity(Intent(this, SettingsActivity::class.java))
+//                true
+//            }
             else -> super.onOptionsItemSelected(item)
         }
     }

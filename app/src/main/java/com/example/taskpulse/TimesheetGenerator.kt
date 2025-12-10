@@ -46,6 +46,7 @@ class TimesheetGenerator(private val context: Context) {
             dataRow.createCell(0).setCellValue((i + 1).toDouble())
             dataRow.createCell(1).setCellValue(entry.date)
             dataRow.createCell(2).setCellValue(entry.day)
+            dataRow.createCell(3).setCellValue(entry.intakeId)
 
             when {
                 entry.isWeekend -> {
@@ -54,6 +55,7 @@ class TimesheetGenerator(private val context: Context) {
                         nextRow.createCell(0).setCellValue((i + 2).toDouble())
                         nextRow.createCell(1).setCellValue(entries[i + 1].date)
                         nextRow.createCell(2).setCellValue(entries[i + 1].day)
+                        nextRow.createCell(3).setCellValue(entries[i + 1].intakeId)
                         sheet.addMergedRegion(CellRangeAddress(dataRow.rowNum, nextRow.rowNum, 4, 10))
                         val mergedCell = dataRow.createCell(4)
                         mergedCell.setCellValue("WEEKEND")
@@ -71,7 +73,6 @@ class TimesheetGenerator(private val context: Context) {
                     totalLeaves++
                 }
                 else -> {
-                    dataRow.createCell(3).setCellValue(entry.intakeId)
                     dataRow.createCell(4).setCellValue(entry.workDescription)
                     dataRow.createCell(5).setCellValue(projectName) // Use project name here
                     dataRow.createCell(6).setCellValue(entry.futureBenefit)

@@ -10,8 +10,8 @@
         android:id="@+id/action_refresh_holidays"
         android:title="Refresh Holidays"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_configure_file"
-        android:title="Configure File Details"
-        app:showAsAction="never" />
+<!--    <item-->
+<!--        android:id="@+id/action_configure_file"-->
+<!--        android:title="Configure File Details"-->
+<!--        app:showAsAction="never" />-->
 </menu>
